@@ -14,7 +14,11 @@ class State(BaseModel, Base):
     if models.storage_t == "db":
         __tablename__ = 'states'
         name = Column(String(128), nullable=False)
-        cities = relationship("City", backref="state")
+        cities = relationship(
+            "City",
+            cascade='all, delete, delete-orphan',
+            backref="state"
+        )
     else:
         name = ""
 
@@ -26,9 +30,9 @@ class State(BaseModel, Base):
         @property
         def cities(self):
             """getter for list of city instances related to the state"""
-            city_list = []
-            all_cities = models.storage.all(City)
-            for city in all_cities.values():
+            c_list = []
+            a_cities = models.storage.all(City)
+            for city in a_cities.values():
                 if city.state_id == self.id:
-                    city_list.append(city)
-            return city_list
+                    c_list.append(city)
+            return c_list
